@@ -5,51 +5,69 @@ Author: Alejandro Escontrela
 Version: V.1.
 Date: June 12th, 2018
 '''
+from CNN.forward import *
 import numpy as np
+import gzip
 
-def initializeFilterNormal(num_filters, filter_dims,input_depth, SCALE = 1):
+#####################################################
+################## Utility Methods ##################
+#####################################################
+        
+def extract_data(filename, num_images, IMAGE_WIDTH):
     '''
-    Initialize filter for convolutional step using a normal distribution with a specified standard deviation.
-    
-    Inputs:
-    |--num_filters: number of desired filters for the convolutional layer
-    |--filter_dims: dimensions of the filter
-    |--input_depth: depth of the input
-    
-    Outputs:
-    |--filter
-    
-    NOTE: input_depth parameter must be equal to the depth of the input image filters are being applied to
+    Extract images by reading the file bytestream. Reshape the read values into a 3D matrix of dimensions [m, h, w], where m 
+    is the number of training examples.
     '''
-    
-    stddev = SCALE *1 /np.sqrt(input_depth*filter_dims*filter_dims)
-    
-    return np.random.normal(loc = 0, scale = stddev, size = (num_filters, input_depth, filter_dims, filter_dims))
+    print('Extracting', filename)
+    with gzip.open(filename) as bytestream:
+        bytestream.read(16)
+        buf = bytestream.read(IMAGE_WIDTH * IMAGE_WIDTH * num_images)
+        data = np.frombuffer(buf, dtype=np.uint8).astype(np.float32)
+        data = data.reshape(num_images, IMAGE_WIDTH*IMAGE_WIDTH)
+        return data
 
-def initializeWeightsXavier(num_neurons, num_inputs):
+def extract_labels(filename, num_images):
     '''
-    Initialize the weights for fully connected step using Xavier initialization. Var(W) = 2/num_neurons
-    
-    inputs:
-    |--num_neurons: the number of outputs of this dense layer
-    |--num_inputs: input_depth
-    
-    outputs:
-    |--weights
+    Extract label into vector of integer values of dimensions [m, 1], where m is the number of images.
     '''
-    return np.random.randn(num_neurons, num_inputs).astype(np.float32) * 0.01
+    print('Extracting', filename)
+    with gzip.open(filename) as bytestream:
+        bytestream.read(8)
+        buf = bytestream.read(1 * num_images)
+        labels = np.frombuffer(buf, dtype=np.uint8).astype(np.int64)
+    return labels
+
+def initializeFilter(size, scale = 1.0):
+    stddev = scale/np.sqrt(np.prod(size))
+    return np.random.normal(loc = 0, scale = stddev, size = size)
+
+def initializeWeight(size):
+    return np.random.standard_normal(size=size) * 0.01
 
 def nanargmax(arr):
+    idx = np.nanargmax(arr)
+    idxs = np.unravel_index(idx, arr.shape)
+    return idxs    
+
+def predict(image, f1, f2, w3, w4, b1, b2, b3, b4, conv_s = 1, pool_f = 2, pool_s = 2):
     '''
-    Find the maximum value of the input array that isn't of type np.nan
-    
-    inputs: 
-    |--arr: input array to find the max value indices of
-    
-    outputs:
-    |--multi_idx: (a,b) ordered pair of max value's index
+    Make predictions with trained filters/weights. 
     '''
-    idx = np.nanargmax(arr, axis = None)
-    multi_idx = np.unravel_index(idx, (arr.shape))
+    conv1 = convolution(image, f1, b1, conv_s) # convolution operation
+    conv1[conv1<=0] = 0 #relu activation
     
-    return multi_idx
+    conv2 = convolution(conv1, f2, b2, conv_s) # second convolution operation
+    conv2[conv2<=0] = 0 # pass through ReLU non-linearity
+    
+    pooled = maxpool(conv2, pool_f, pool_s) # maxpooling operation
+    (nf2, dim2, _) = pooled.shape
+    fc = pooled.reshape((nf2 * dim2 * dim2, 1)) # flatten pooled layer
+    
+    z = w3.dot(fc) + b3 # first dense layer
+    z[z<=0] = 0 # pass through ReLU non-linearity
+    
+    out = w4.dot(z) + b4 # second dense layer
+    probs = softmax(out) # predict class probabilities with the softmax activation function
+    
+    return np.argmax(probs), np.max(probs)
+    
