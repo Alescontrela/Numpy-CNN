@@ -5,17 +5,18 @@ A numpy-only implementation of a Convolutional Neural Network, from the ground u
 
 ## Purpose
 
-To gain a quality understanding of convolutional neural networks and what makes them peform so well, I constructed one from scratch with NumPy. This CNN is in no way intended to replace popular DL frameworks such as Tensorflow or Torch, it is instead meant to serve as an instructional tool by anyone who wishes to understand the underlying mechinery of a CNN. 
+To gain a quality understanding of convolutional neural networks and what makes them peform so well, I constructed one from scratch with NumPy. This CNN is in no way intended to replace popular DL frameworks such as Tensorflow or Torch, it is instead meant to serve as an instructional tool.
 
 ## Training the network
 
 To train the network on your machine, first install all necessary dependencies using:
 
-`pip install -r requirements.txt`
+
+`$ pip install -r requirements.txt`
 
 Afterwards, you can train the network using the following command: 
 
-`python3 train_cnn.py '<file_name>.pkl'`
+`$ python3 train_cnn.py '<file_name>.pkl'`
 
 Replace `<file_name>` with whatever file name you would like. The terminal should display the following progress bar to indicate the training progress, as well as the cost for the current training batch:
 <p align = "center">
@@ -30,7 +31,7 @@ The network takes about 5 hours to train on my macbook pro. I included the train
 ## Measuring Performance
 To measure the network's accuracy, run the following command in the terminal:
 
-`python3 measure_performance.py '<file_name>.pkl'`
+`$ python3 measure_performance.py '<file_name>.pkl'`
 
 This command will use the trained parameters to run predictions on all 10,000 digits in the test dataset. After all predictions are made, a value displaying the network's accuracy will appear in the command prompt:
 
