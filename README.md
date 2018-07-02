@@ -18,8 +18,9 @@ Afterwards, you can train the network using the following command:
 `python3 train_cnn.py '<file_name>.pkl'`
 
 Replace `<file_name>` with whatever file name you would like. The terminal should display the following progress bar to indicate the training progress, as well as the cost for the current training batch:
-
-<img width="80%" align="middle" alt="portfolio_view" src="https://github.com/Alescontrela/Numpy-CNN/blob/master/images/training_progress.png">
+<p align = "center">
+<img width="80%" alt="portfolio_view" src="https://github.com/Alescontrela/Numpy-CNN/blob/master/images/training_progress.png">
+</p>
 
 
 After the CNN has finished training, a .pkl file containing the network's parameters is saved to the directory where the script was run.
@@ -33,4 +34,6 @@ To measure the network's accuracy, run the following command in the terminal:
 
 This command will use the trained parameters to run predictions on all 10,000 digits in the test dataset. After all predictions are made, a value displaying the network's accuracy will appear in the command prompt:
 
-<img width="80%" align="middle" alt="portfolio_view" src="https://github.com/Alescontrela/Numpy-CNN/blob/master/images/test_accuracy.png">
+<p align="center">
+<img width="80%" alt="portfolio_view" src="https://github.com/Alescontrela/Numpy-CNN/blob/master/images/test_accuracy.png">
+</p>
