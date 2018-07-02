@@ -31,4 +31,6 @@ To measure the network's accuracy, run the following command in the terminal:
 
 `python3 measure_performance.py '<file_name>.pkl'`
 
-This command will use the trained parameters to run predictions on all 10,000 digits in the test dataset. After all predictions are made, a value displaying the network's accuracy will appear in the command prompt
+This command will use the trained parameters to run predictions on all 10,000 digits in the test dataset. After all predictions are made, a value displaying the network's accuracy will appear in the command prompt:
+
+<img width="80%" alt="portfolio_view" src="https://github.com/Alescontrela/Numpy-CNN/blob/master/images/test_accuracy.png">
